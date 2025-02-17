@@ -19,11 +19,6 @@ jobs:
           name: public-folder
           path: public  # Certifique-se de que a pasta 'public' existe
 
-      - name: Baixar os arquivos no runner
-        uses: actions/download-artifact@v4
-        with:
-          name: public-folder
-
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
