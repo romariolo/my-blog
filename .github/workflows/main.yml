@@ -11,22 +11,18 @@ jobs:
 
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Gerar os arquivos do site (se necessário)
-        run: echo "Arquivos prontos para upload" 
-
-      - name: Fazer upload dos arquivos gerados
-        uses: actions/upload-artifact@v3
+      - name: Upload dos arquivos para o GitHub Actions
+        uses: actions/upload-artifact@v4
         with:
           name: public-folder
-          path: public  # Certifique-se de que este é o diretório correto
+          path: public  # Certifique-se de que a pasta 'public' existe
 
-      - name: Baixar os arquivos gerados
-        uses: actions/download-artifact@v3
+      - name: Baixar os arquivos no runner
+        uses: actions/download-artifact@v4
         with:
           name: public-folder
-          path: public  # Baixa os arquivos para a mesma pasta
 
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v1
