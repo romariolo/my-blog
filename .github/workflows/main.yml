@@ -13,6 +13,20 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
+      - name: Verificar arquivos do repositório
+        run: ls -la
+
+      - name: Instalar dependências (caso use Node.js)
+        run: npm install
+        continue-on-error: true  # Se não for um projeto Node.js, isso evita falhas no pipeline
+
+      - name: Construir o projeto (caso seja necessário)
+        run: npm run build
+        continue-on-error: true  # Se não precisar de build, evita falha
+
+      - name: Verificar se a pasta pública existe após build
+        run: ls -la public || echo "A pasta 'public/' não foi encontrada!"
+
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -22,4 +36,13 @@ jobs:
 
       - name: Fazer upload para o S3
         run: |
-          aws s3 sync public s3://${{ secrets.AWS_S3_BUCKET }} --delete
+          if [ -d "public" ]; then
+            echo "Pasta 'public/' encontrada. Iniciando upload..."
+            aws s3 sync public s3://${{ secrets.AWS_S3_BUCKET }} --delete
+          else
+            echo "Erro: A pasta 'public/' não existe. Verifique o processo de build."
+            exit 1
+          fi
+
+      - name: Limpeza pós-deploy
+        run: echo "Deploy finalizado com sucesso!"
