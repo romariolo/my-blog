@@ -13,12 +13,6 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Upload dos arquivos para o GitHub Actions
-        uses: actions/upload-artifact@v4
-        with:
-          name: public-folder
-          path: public  # Certifique-se de que a pasta 'public' existe
-
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
