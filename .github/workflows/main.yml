@@ -13,4 +13,28 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v2
 
-    
+      - name: Gerar os arquivos do site (se necessário)
+        run: echo "Arquivos prontos para upload" 
+
+      - name: Fazer upload dos arquivos gerados
+        uses: actions/upload-artifact@v3
+        with:
+          name: public-folder
+          path: public  # Certifique-se de que este é o diretório correto
+
+      - name: Baixar os arquivos gerados
+        uses: actions/download-artifact@v3
+        with:
+          name: public-folder
+          path: public  # Baixa os arquivos para a mesma pasta
+
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Fazer upload para o S3
+        run: |
+          aws s3 sync public s3://${{ secrets.AWS_S3_BUCKET }} --delete
