@@ -3,7 +3,7 @@ name: Deploy para S3
 on:
   push:
     branches:
-      - main
+      - main  # O deploy será acionado quando houver push na branch 'main'
 
 jobs:
   deploy:
@@ -13,9 +13,6 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Listar arquivos antes do upload (debug)
-        run: ls -la && ls -la public || echo "A pasta 'public/' não foi encontrada!"
-
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -23,12 +20,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Verificar estrutura do projeto
+        run: ls -la
+
+      - name: Criar pasta public se não existir
+        run: mkdir -p public && cp -r index.html styles.css script.js imagens posts public/
+
+      - name: Verificar arquivos na pasta public
+        run: ls -la public
+
       - name: Fazer upload para o S3
-        run: |
-          if [ -d "public" ]; then
-            echo "Pasta 'public/' encontrada. Iniciando upload..."
-            aws s3 sync public s3://${{ secrets.AWS_S3_BUCKET }} --delete
-          else
-            echo "Erro: A pasta 'public/' não existe no runner do GitHub Actions."
-            exit 1
-          fi
+        run: aws s3 sync public s3://${{ secrets.AWS_S3_BUCKET }} --delete
