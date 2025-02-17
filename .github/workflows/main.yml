@@ -16,14 +16,7 @@ jobs:
       - name: Verificar arquivos do repositório
         run: ls -la
 
-      - name: Instalar dependências (caso use Node.js)
-        run: npm install
-        continue-on-error: true  # Se não for um projeto Node.js, isso evita falhas no pipeline
-
-      - name: Construir o projeto (caso seja necessário)
-        run: npm run build
-        continue-on-error: true  # Se não precisar de build, evita falha
-
+  
       - name: Verificar se a pasta pública existe após build
         run: ls -la public || echo "A pasta 'public/' não foi encontrada!"
 
